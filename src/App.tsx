@@ -10,8 +10,20 @@ import { Combo } from './pages/Combo';
 import { Services } from './pages/Services';
 import { Contact } from './pages/Contact';
 import { SignIn } from './pages/SignIn';
+import { supabase } from './lib/supabase';
 
 function App() {
+  // 🔐 SAFETY GUARD (MOST IMPORTANT)
+  if (!supabase) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600">
+          App loading… (configuration missing)
+        </p>
+      </div>
+    );
+  }
+
   return (
     <ThemeProvider>
       <AuthProvider>

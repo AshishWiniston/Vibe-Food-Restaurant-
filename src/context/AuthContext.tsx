@@ -20,68 +20,105 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // 🔐 SAFETY CHECK
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+
+    supabase.auth.getSession().then(({ data }) => {
+      const session = data.session;
       setSession(session);
+
       if (session?.user) {
         setUser({
           id: session.user.id,
           email: session.user.email || '',
-          name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
+          name:
+            session.user.user_metadata?.full_name ||
+            session.user.email?.split('@')[0] ||
+            'User',
           avatar_url: session.user.user_metadata?.avatar_url
         });
       }
+
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      (async () => {
-        setSession(session);
-        if (session?.user) {
-          setUser({
-            id: session.user.id,
-            email: session.user.email || '',
-            name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
-            avatar_url: session.user.user_metadata?.avatar_url
-          });
-        } else {
-          setUser(null);
-        }
-        setLoading(false);
-      })();
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email || '',
+          name:
+            session.user.user_metadata?.full_name ||
+            session.user.email?.split('@')[0] ||
+            'User',
+          avatar_url: session.user.user_metadata?.avatar_url
+        });
+      } else {
+        setUser(null);
+      }
+
+      setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signInWithGoogle = async () => {
+    if (!supabase) return;
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}`
+        redirectTo: window.location.origin
       }
     });
-    if (error) throw error;
+
+    if (error) console.error(error);
   };
 
   const signInWithFacebook = async () => {
+    if (!supabase) return;
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'facebook',
       options: {
-        redirectTo: `${window.location.origin}`
+        redirectTo: window.location.origin
       }
     });
-    if (error) throw error;
+
+    if (error) console.error(error);
   };
 
   const signOut = async () => {
+    if (!supabase) return;
+
     const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    if (error) console.error(error);
+
     setUser(null);
     setSession(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signInWithGoogle, signInWithFacebook, signOut }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        session,
+        loading,
+        signInWithGoogle,
+        signInWithFacebook,
+        signOut
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
