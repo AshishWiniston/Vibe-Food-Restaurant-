@@ -21,9 +21,14 @@ export const Navbar = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="fixed w-full z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg transition-colors duration-300">
+    <nav
+      className="fixed top-0 left-0 w-full z-50 
+                bg-white/90 dark:bg-gray-900/90 
+                backdrop-blur-md shadow-lg 
+                transition-colors duration-300"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-16 ">
           <Link
             to="/"
             className="text-2xl font-bold text-amber-600 dark:text-amber-500 hover:scale-105 transition-transform duration-300"
