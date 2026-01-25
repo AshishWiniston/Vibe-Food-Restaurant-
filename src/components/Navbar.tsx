@@ -28,7 +28,7 @@ export const Navbar = () => {
             to="/"
             className="text-2xl font-bold text-amber-600 dark:text-amber-500 hover:scale-105 transition-transform duration-300"
           >
-            Ashish Winiston D
+            Vibe Food
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">
